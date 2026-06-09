@@ -198,6 +198,9 @@
     .ticket .name{font-weight:950;margin-top:8px}
     .ticket .time{color:var(--muted);font-weight:700;font-size:12px;margin-top:4px}
     .badge{margin-top:10px;display:inline-flex;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.3px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);}
+    .badge.expired{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.14);color:#fca5a5;}
+    .ticket-blocked{opacity:.65;}
+    .ticket-blocked:hover{transform:none!important;border-color:rgba(255,255,255,.14)!important;box-shadow:0 12px 35px rgba(0,0,0,.34)!important;}
 
     /* ===== MODAL / QR pro anim ===== */
     .modal{
@@ -603,6 +606,11 @@
       return `${currentEmployee.id}_${todayStr()}_${typeId}`;
     }
 
+    function isLunchExpired(){
+      const now = new Date();
+      return now.getHours() >= 15;
+    }
+
     function renderQRToDataURL(text){
       return new Promise((resolve)=>{
         const pre = document.getElementById('qrPreRender');
@@ -681,14 +689,17 @@
       container.innerHTML = '';
 
       TICKET_TYPES.forEach(type=>{
+        const lunchBlocked = (type.id === 'lunch') && isLunchExpired();
         const card = document.createElement('div');
-        card.className = 'ticket';
+        card.className = 'ticket' + (lunchBlocked ? ' ticket-blocked' : '');
         card.onclick = ()=> showTicket(type);
         card.innerHTML = `
           <div class="icon">${type.icon}</div>
           <div class="name">${type.name}</div>
           <div class="time">${type.time}</div>
-          <div class="badge">AKTİV</div>
+          <div class="badge${lunchBlocked ? ' expired' : ''}">
+            ${lunchBlocked ? 'MÜDDƏTİ BİTİB (15:00)' : 'AKTİV'}
+          </div>
         `;
         container.appendChild(card);
       });
@@ -696,6 +707,16 @@
 
     async function showTicket(type){
       if (!currentEmployee) return;
+
+      if (type.id === 'lunch' && isLunchExpired()) {
+        openModal('qrModal');
+        document.getElementById('qrTicketInfo').textContent =
+          `${currentEmployee.fullName} • ${type.name} • ${todayStr()}`;
+        setQRBoxHTML(`<div class="qrStatusText" style="color:#ef4444;font-size:14px;padding:10px;text-align:center;">
+          ⛔ Günorta yeməyi talonu<br>saat 15:00-da bağlanıb.<br>Sabah yenilənəcək.
+        </div>`);
+        return;
+      }
 
       document.getElementById('qrTicketInfo').textContent =
         `${currentEmployee.fullName} • ${type.name} • ${todayStr()}`;
