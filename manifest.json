@@ -1,0 +1,13 @@
+{
+  "name": "GHG Yemək Talonu",
+  "short_name": "GHG Talon",
+  "description": "GHG Elektron Yemək Talon Sistemi",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050b16",
+  "theme_color": "#0f2a55",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
