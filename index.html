@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
+  <script>
+    // Sayt myghgplatform.com/qr-talon/-ə köçürülüb. Bu domen artıq istifadə olunmur —
+    // "Yadda saxla" ilə saxlanmış giriş məlumatı (varsa) yeni domenə ötürülür ki, istifadəçi
+    // yenidən kod/parol yazmasın, sonra yeni ünvana yönləndirilir.
+    (function(){
+      var NEW_URL = 'https://myghgplatform.com/qr-talon/';
+      try {
+        var emp = localStorage.getItem('ghg_employee');
+        var creds = localStorage.getItem('ghg_creds');
+        var h = '';
+        if (emp) h += '&emp=' + encodeURIComponent(emp);
+        if (creds) h += '&creds=' + encodeURIComponent(creds);
+        location.replace(NEW_URL + (h ? '#migrate=1' + h : ''));
+      } catch (e) {
+        location.replace(NEW_URL);
+      }
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
   <title>GHG Yemək Talonu</title>
